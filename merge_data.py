@@ -3,7 +3,7 @@ import glob
 import os
 
 # 1. กำหนดโฟลเดอร์ที่เก็บไฟล์ (ใส่ '.' ถ้าวางไฟล์ py นี้ไว้ที่เดียวกับข้อมูล)
-folder_path = '.' 
+folder_path = './dataset_new' 
 all_files = glob.glob(os.path.join(folder_path, "*")) # อ่านทุกไฟล์
 
 # ชื่อ Column ตามลำดับใน Dataset (Mapping ตามที่คุณให้มา)
@@ -56,9 +56,9 @@ if data_list:
     final_df = final_df.sort_values('datetime') # เรียงตามเวลา
     
     # Save เป็น CSV ไฟล์เดียวจบ
-    final_df.to_csv("zeus_dataset_combined.csv", index=False)
+    final_df.to_csv("zeus_dataset_combined_new.csv", index=False)
     print("-----------------------------------")
-    print("✅ รวมร่างเสร็จสมบูรณ์! ได้ไฟล์ชื่อ zeus_dataset_combined.csv")
+    print("✅ รวมร่างเสร็จสมบูรณ์")
     print(f"ข้อมูลทั้งหมด {len(final_df)} แถว")
 else:
     print("❌ ไม่พบข้อมูลที่อ่านได้")
