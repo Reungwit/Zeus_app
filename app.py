@@ -465,7 +465,9 @@ def page_chatbot(data, models):
                 ai_response = "ข้าสัมผัสไม่ได้ถึงพลังญาณหยั่งรู้ พวกมนุษย์อย่างเจ้าทำเซิร์ฟเวอร์ข้าพังรึ?!"
             else:
                 thai_tz = pytz.timezone('Asia/Bangkok')
-                current_h = datetime.now(thai_tz).hour
+                now = datetime.now(thai_tz)
+                current_h = now.hour
+                current_m = now.month  # ⚡ ดึงเดือนปัจจุบัน (1-12) เพื่อระบุฤดูกาล [cite: 2026-03-04]
                 
                 hum = data['current']['relative_humidity_2m']
                 press = data['current']['surface_pressure']
@@ -474,7 +476,7 @@ def page_chatbot(data, models):
                 uv = data['hourly']['uv_index'][current_h]
                 is_day = 1 if 6 <= current_h <= 18 else 0
                 
-                # ทำนายอุณหภูมิจากโมเดล Random Forest
+                # --- ปรับจูน X_input ให้มี 8 Features ตามที่ Train มา [cite: 2026-03-04] ---
                 X_input = pd.DataFrame({
                     'humidity': [hum],
                     'pressure': [press],
@@ -482,8 +484,12 @@ def page_chatbot(data, models):
                     'uv': [uv],
                     'wind_speed': [wind],
                     'hour': [current_h],
-                    'is_day': [is_day]
+                    'is_day': [is_day],
+                    'month': [current_m]  # ✅ เพิ่มฟีเจอร์เดือนเข้าไปแล้ว
                 })
+                
+                # ทำนายอุณหภูมิจากโมเดล Random Forest (ใช้ X_input ที่มี month)
+                # หมายเหตุ: ลำดับคอลัมน์ต้องตรงกับที่ใช้ตอน fit โมเดล [cite: 2026-03-04]
                 pred_temp = models['temp'].predict(X_input)[0]
                 
                 # ดึงฟังก์ชัน Mood และ Advice จากที่มีอยู่แล้วใน app.py
