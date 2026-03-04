@@ -17,81 +17,116 @@ st.set_page_config(
     initial_sidebar_state="expanded" # ตั้งค่าให้เปิด Sidebar มาก่อนเลย
 )
 
-# --- CSS STYLING (Navbar, Sidebar Fix, Centering) ---
 st.markdown("""
     <style>
+    /* ---------------------------------------------------- */
+    /* 0. GLOBAL COLOR PALETTE (Blue Storm & Lightning Gold)*/
+    /* ---------------------------------------------------- */
     /* Main Background */
-    .stApp { background-color: #FAFAFA; color: #000; }
+    .stApp { background: linear-gradient(135deg, #001533 0%, #014591 100%); color: #ffffff; }
     
     /* ---------------------------------------------------- */
     /* 1. NAVBAR STYLE */
     /* ---------------------------------------------------- */
      .navbar {
-    #     position: fixed;
-    #     top: 0;
-    #     left: 0;
-    #     width: 100%;
-        background-color: #fff;
-        color: #FFD700;
-         padding: 15px;
-         text-align: center;
-         font-size: 28px;
-         font-weight: bold;
-         z-index: 9999; /* อยู่สูงกว่าเนื้อหาปกติ */
-         border-bottom: 3px solid #FFD700;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        background: linear-gradient(to right, #000c1f, #001533); /* กลืนไปกับพื้นหลังแต่เข้มกว่า */
+        color: #FFD700; /* สีทอง Zeus */
+        padding: 15px;
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        z-index: 9999;
+        border-bottom: 2px solid #FFD700;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* เงาให้ดูมีมิติ */
      }
     
     /* ดันเนื้อหาลงมาไม่ให้โดน Navbar บัง */
     .main-content { margin-top: 0px; }
     
     /* ---------------------------------------------------- */
-    /* 2. SIDEBAR & TOGGLE BUTTON FIX (แก้ปัญหาปุ่มหาย) */
+    /* 2. SIDEBAR & TOGGLE BUTTON FIX */
     /* ---------------------------------------------------- */
     
     /* ซ่อนแถบสีรุ้งด้านบนสุดของ Streamlit */
-    [data-testid="stDecoration"] {
-        display: none;
-    }
+    [data-testid="stDecoration"] { display: none; }
 
-    /* ปรับแต่งปุ่มกดเปิด Sidebar (Hamburger) ให้ลอยเหนือ Navbar */
+    /* ปุ่ม Hamburger โปร่งใสและเป็นสีทอง */
     [data-testid="stSidebarCollapsedControl"] {
-        z-index: 100000 !important; /* ต้องสูงกว่า Navbar (9999) */
-        color: #FFD700 !important; /* สีทอง */
-        top: 15 px !important; /* ปรับตำแหน่งให้ตรงกับ Navbar */
+        z-index: 100000 !important;
+        color: #FFD700 !important; 
+        top: 15px !important; 
         left: 20px !important;
         background-color: transparent !important;
     }
     
-    /* ปรับแต่งตัว Sidebar เมื่อเปิดออกมา */
+    /* ตัว Sidebar */
     section[data-testid="stSidebar"] {
-        z-index: 100001 !important; /* ต้องสูงกว่าปุ่มและ Navbar */
+        z-index: 100001 !important; 
         top: 5 !important;
-        padding-top: 100px !important; /* เว้นที่ด้านบนไม่ให้โลโก้ชนขอบ */
+        padding-top: 100px !important; 
+        background-color: ##5c5c5c !important; /* พื้นหลัง Sidebar สีน้ำเงินเข้มโปร่งแสงนิดๆ */
     }
 
     /* ---------------------------------------------------- */
-    /* 3. CENTER CONTENT STYLE */
+    /* 3. METRIC CARDS (Glassmorphism Style) */
     /* ---------------------------------------------------- */
-    .center-text { text-align: center; }
+    .center-text { text-align: center; color: #FFD700; } /* หัวข้อตรงกลางเป็นสีทอง */
+    
+    /* กล่องแสดงตัวเลข (อุณหภูมิ, ความชื้น ฯลฯ) */
     div[data-testid="stMetric"] { 
-        background-color: #FFF; 
+        background-color: rgba(255, 255, 255, 0.08); /* พื้นหลังโปร่งแสงแบบกระจก */
+        backdrop-filter: blur(10px); /* เบลอฉากหลังให้ดูพรีเมียม */
         padding: 15px; 
-        border-radius: 10px; 
-        border: 1px solid #444;
+        border-radius: 12px; 
+        border: 1px solid rgba(255, 215, 0, 0.3); /* ขอบสีทองจางๆ */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         font-size: 18px;
         text-align: center;
         margin: auto;
     }
-    div[data-testid="stMetricLabel"] { justify-content: center; }
-    div[data-testid="stMetricValue"] { justify-content: center; color: #132C9C; }
     
-    /* ซ่อน Header ปกติของ Streamlit แต่ไม่ซ่อนปุ่ม Sidebar */
+    /* ---------------------------------------------------- */
+    /* แก้ไขสี Label (ป้ายกำกับ) ให้เป็นสีขาว/ทอง ตามใจสั่ง */
+    /* ---------------------------------------------------- */
+    [data-testid="stMetricLabel"], 
+    [data-testid="stMetricLabel"] > div, 
+    [data-testid="stMetricLabel"] div {
+        color: #FFFFFF !important; /* เปลี่ยนเป็นสีขาว */
+        font-weight: bold !important;
+        font-size: 16px !important;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* กรณีมี Icon อยู่ใน Label ด้วย ให้เปลี่ยนสี Icon เป็นสีทอง */
+    [data-testid="stMetricLabel"] svg {
+        fill: #FFD700 !important;
+    }
+    
+    
+    /* จัดตัวเลข (Value) ไว้ตรงกลางและเป็นสีทองให้เด่นกระแทกตา */
+    div[data-testid="stMetricValue"] { justify-content: center; color: #FFD700; text-shadow: 1px 1px 5px rgba(255, 215, 0, 0.3); } 
+    
+    /* ซ่อน Header ปกติของ Streamlit */
     header[data-testid="stHeader"] {
         background-color: transparent;
         z-index: 1; 
     }
     
+    .st-c4{
+        color: #FFD700 !important; 
+    }
+    
+    
+    .st-cm {
+        color: #d2d3da !important;    
+    }
+    
+    .st-emotion-cache-1flajlm {
+       color: #d2d3da !important;     
+    }
+     
+
     </style>
     
     <div class="navbar">
@@ -185,7 +220,7 @@ def check_zeus_mood(pressure, humidity, rain_status):
 # ==========================================
 
 def page_dashboard(data):
-    st.markdown("<h1 class='center-text'>👁️ Zeus Eye</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='center-text'>Zeus Eye</h1>", unsafe_allow_html=True)
     current = data['current']
     
     # Metrics Grid
@@ -258,7 +293,7 @@ def page_dashboard(data):
     
 
 def page_oracle(data, models):
-    st.markdown("<h1 class='center-text'>🔮 The Zeus Oracle </h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='center-text'>🔱 The Zeus Oracle </h1>", unsafe_allow_html=True)
     
     # --- 1. ตรวจสอบสถานะ API (API Health Check) ---
     if data is None or 'hourly' not in data:
@@ -277,12 +312,17 @@ def page_oracle(data, models):
         # จัดการเรื่องเวลา (Timezone)
         thai_tz = pytz.timezone('Asia/Bangkok')
         current_dt = datetime.now(thai_tz)
-        current_h = current_dt.hour
         
-        # สร้างลิสต์เวลา 24 ชม. ข้างหน้า
-        next_24_hours = [(current_h + i) % 24 for i in range(24)]
+        # --- เตรียมข้อมูล (Data Preparation) ---
+        next_24_hours = []
+        month_list = []
         
-        # --- เตรียมข้อมูล (Data Preparation & Logic Fixes) ---
+        for i in range(24):
+            # คำนวณเวลาแต่ละชั่วโมงล่วงหน้า
+            future_time = current_dt + timedelta(hours=i)
+            next_24_hours.append(future_time.hour)
+            month_list.append(future_time.month) # ⚡ ดึงเดือนที่ถูกต้อง (1-12)
+        
         is_day_list = [1 if 6 <= h <= 18 else 0 for h in next_24_hours]
         
         uv_corrected = []
@@ -292,6 +332,7 @@ def page_oracle(data, models):
             else:
                 uv_corrected.append(uv_val)
 
+        # สร้าง DataFrame สำหรับทำนาย
         future_df = pd.DataFrame({
             'temp': hourly['temperature_2m'][:24],
             'humidity': hourly['relative_humidity_2m'][:24],
@@ -300,24 +341,27 @@ def page_oracle(data, models):
             'uv': uv_corrected,
             'wind_speed': hourly['wind_speed_10m'][:24],
             'hour': next_24_hours,
-            'is_day': is_day_list
+            'is_day': is_day_list,        
+            'month': month_list           
         })
 
         # --- AI Prediction (ทำนายผล) ---
-        X_temp = future_df[['humidity', 'pressure', 'rain', 'uv', 'wind_speed', 'hour', 'is_day']]
+        # มั่นใจได้ว่าลำดับ Feature ตรงกับที่ Train มา (8 columns)
+        X_temp = future_df[['humidity', 'pressure', 'rain', 'uv', 'wind_speed', 'hour', 'is_day', 'month']]
         pred_temp = models['temp'].predict(X_temp)
         
-        X_hum = future_df[['temp', 'pressure', 'rain', 'uv', 'wind_speed', 'hour', 'is_day']]
+        X_hum = future_df[['temp', 'pressure', 'rain', 'uv', 'wind_speed', 'hour', 'is_day', 'month']]
         pred_hum = models['humidity'].predict(X_hum)
 
-        X_rain = future_df[['temp', 'humidity', 'pressure', 'uv', 'wind_speed', 'hour', 'is_day']]
+        X_rain = future_df[['temp', 'humidity', 'pressure', 'uv', 'wind_speed', 'hour', 'is_day', 'month']]
+        # ทำนายโอกาสเกิดฝน (Probability)
         pred_rain_prob = models['rain'].predict_proba(X_rain)[:, 1] * 100
 
-        X_uv = future_df[['temp', 'humidity', 'pressure', 'rain', 'wind_speed', 'hour', 'is_day']]
+        X_uv = future_df[['temp', 'humidity', 'pressure', 'rain', 'wind_speed', 'hour', 'is_day', 'month']]
         pred_uv = models['uv'].predict(X_uv)
-
+    
         # --- แสดงผลตัวเลข (Forecast Metrics) ---
-        st.subheader("🕒 พยากรณ์ล่วงหน้า (AI Forecast)")
+        st.subheader("🕒 พยากรณ์ล่วงหน้า โดย Zeus Oracle Model")
         
         target_hours = [1, 3, 6, 12]
         cols = st.columns(len(target_hours))
@@ -336,7 +380,7 @@ def page_oracle(data, models):
 
         # --- กราฟเปรียบเทียบ (Comparison Charts) ---
         st.markdown("---")
-        st.subheader("📊 เปรียบเทียบ: Zeus AI vs Standard API")
+        st.subheader("📊 เปรียบเทียบ:  Zeus Oracle Model vs Open-Meteo")
         
         tab1, tab2, tab3, tab4 = st.tabs(["🌡️ อุณหภูมิ", "💧 ความชื้น", "☀️ UV Index", "🌧️ ฝน"])
         
@@ -344,7 +388,7 @@ def page_oracle(data, models):
 
         with tab1:
             fig_temp = go.Figure()
-            fig_temp.add_trace(go.Scatter(x=times, y=pred_temp, name='Zeus AI (Local)',
+            fig_temp.add_trace(go.Scatter(x=times, y=pred_temp, name='Zeus Oracle Model (Local)',
                                         line=dict(color='#FFD700', width=4)))
             fig_temp.add_trace(go.Scatter(x=times, y=hourly['temperature_2m'][:24], name='Standard API',
                                         line=dict(color='gray', dash='dot', width=2)))
@@ -354,7 +398,7 @@ def page_oracle(data, models):
 
         with tab2:
             fig_hum = go.Figure()
-            fig_hum.add_trace(go.Scatter(x=times, y=pred_hum, name='Zeus AI',
+            fig_hum.add_trace(go.Scatter(x=times, y=pred_hum, name='Zeus Oracle Model',
                                        line=dict(color='#00BFFF', width=4)))
             fig_hum.add_trace(go.Scatter(x=times, y=hourly['relative_humidity_2m'][:24], name='API Base',
                                        line=dict(color='gray', dash='dot', width=2)))
@@ -364,7 +408,7 @@ def page_oracle(data, models):
 
         with tab3:
             fig_uv = go.Figure()
-            fig_uv.add_trace(go.Scatter(x=times, y=pred_uv, name='Zeus AI',
+            fig_uv.add_trace(go.Scatter(x=times, y=pred_uv, name='Zeus Oracle Model',
                                       line=dict(color='#FFA500', width=4)))
             fig_uv.add_trace(go.Scatter(x=times, y=hourly['uv_index'][:24], name='API Base',
                                       line=dict(color='gray', dash='dot', width=2)))
@@ -374,7 +418,7 @@ def page_oracle(data, models):
 
         with tab4:
             fig_rain = make_subplots(specs=[[{"secondary_y": True}]])
-            fig_rain.add_trace(go.Bar(x=times, y=pred_rain_prob, name='Zeus AI (Probability %)',
+            fig_rain.add_trace(go.Bar(x=times, y=pred_rain_prob, name='Zeus Oracle Model (Probability %)',
                                     marker_color='#1E90FF', opacity=0.6), secondary_y=False)
             fig_rain.add_trace(go.Scatter(x=times, y=hourly['rain'][:24], name='API Rain (mm)',
                                         line=dict(color='white', dash='solid')), secondary_y=True)
@@ -418,7 +462,7 @@ def page_chatbot(data, models):
             
             # --- เตรียมข้อมูลจริงจาก Model & API ---
             if not data or not models:
-                ai_response = "ข้าสัมผัสไม่ได้ถึงพลังญาณหยั่งรู้ (Model Error) พวกมนุษย์อย่างเจ้าทำเซิร์ฟเวอร์ข้าพังรึ?!"
+                ai_response = "ข้าสัมผัสไม่ได้ถึงพลังญาณหยั่งรู้ พวกมนุษย์อย่างเจ้าทำเซิร์ฟเวอร์ข้าพังรึ?!"
             else:
                 thai_tz = pytz.timezone('Asia/Bangkok')
                 current_h = datetime.now(thai_tz).hour
@@ -837,7 +881,7 @@ def page_chatbot(data, models):
 
 # --- SIDEBAR SETTINGS ---
 
-st.sidebar.image("https://cdn-icons-png.flaticon.com/512/3062/3062634.png", width=80) 
+
 st.sidebar.title("ZEUS MENU")
 page = st.sidebar.radio("เลือกเมนู", ["Zeus Eye", "The Zeus Oracle", "Ark Zeus Chat"])
 
